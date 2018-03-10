@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# debugpkg:
+#
+# Download the PKGBUILD of the given package, build
+# and package it with debug symbols
+
+set -euo pipefail
+
+WORKDIR="$(mktemp -d)"
+PACKAGE="${1?No package given}"
+
+pushd "${WORKDIR}"
+
+asp update "${PACKAGE}"
+asp export "${PACKAGE}"
+
+pushd "${PACKAGE}"
+makepkg -si OPTIONS=+debug
+
+popd
+popd
+
+rm -rf "${WORKDIR}"
